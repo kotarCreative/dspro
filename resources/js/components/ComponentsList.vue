@@ -63,6 +63,10 @@ export default {
 </script>
 
 <style lang="scss">
+    .components-list {
+        height: 100%;
+    }
+
     .components {
         flex: 1;
         overflow-y: scroll;
@@ -72,6 +76,7 @@ export default {
         border-right: solid 1px rgb(206, 212, 218);
         display: flex;
         flex-direction: column;
+        height: 100%;
     }
 
     .components-header {
@@ -107,11 +112,6 @@ export default {
                 color: #3490dc;
             }
         }
-    }
-
-    .components-list {
-        height: 100%;
-        overflow-y: scroll
     }
 
     .component {

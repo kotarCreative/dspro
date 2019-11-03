@@ -1,5 +1,5 @@
 <template>
-    <div class="components-list">
+    <div class="components-list-wrapper">
         <div class="components-col-body">
             <div class="components-header">
                 <h1>DS Pro</h1>
@@ -39,7 +39,7 @@ export default {
                 filteredComps = filteredComps.filter(c => c.needs_changes);
             }
             if (this.searchTerm) {
-                filteredComps = filteredComps.filter(c => c.title.includes(this.searchTerm));
+                filteredComps = filteredComps.filter(c => c.title.toLowerCase().includes(this.searchTerm.toLowerCase()));
             }
             return filteredComps;
         }
@@ -64,8 +64,15 @@ export default {
 
 <style lang="scss">
 
-    .components-list {
+    .components-list-wrapper {
         height: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .component-list {
+        flex: 1;
+        overflow-y: scroll;
     }
 
     .components-col-body {

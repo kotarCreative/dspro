@@ -9,7 +9,7 @@
                 </div>
                 <div class="components-search">
                     <font-awesome-icon icon="search" class="search-icon" />
-                    <input type="search" placeholder="Search Components" class="form-control">
+                    <input type="search" placeholder="Search Components" class="form-control" v-model="searchTerm">
                 </div>
             </div>
             <div class="components-list">
@@ -29,14 +29,19 @@ export default {
         selectedComponent: Object,
     },
     data: () => ({
-        filtered: false
+        filtered: false,
+        searchTerm: null,
     }),
     computed: {
         displayedComponents() {
+            let filteredComps = this.components;
             if (this.filtered) {
-                return this.components.filter(c => c.needs_changes);
+                filteredComps = filteredComps.filter(c => c.needs_changes);
             }
-            return this.components;
+            if (this.searchTerm) {
+                filteredComps = filteredComps.filter(c => c.title.includes(this.searchTerm));
+            }
+            return filteredComps;
         }
     },
     methods: {

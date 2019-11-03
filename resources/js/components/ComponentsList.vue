@@ -1,5 +1,5 @@
 <template>
-    <div class="components-list-wrapper">
+    <div class="components-list">
         <div class="components-col-body">
             <div class="components-header">
                 <h1>DS Pro</h1>
@@ -12,7 +12,7 @@
                     <input type="search" placeholder="Search Components" class="form-control" v-model="searchTerm">
                 </div>
             </div>
-            <div class="components-list">
+            <div class="components">
                 <div class="component" v-for="component in displayedComponents" :key="component.id" :class="{ selected: selectedComponent === component }" @click="selectComponent(component)">
                     <span class="component-label">{{ component.title }}</span>
                     <font-awesome-icon icon="skull-crossbones" v-if="component.needs_changes" class="changes-icon" />
@@ -63,21 +63,15 @@ export default {
 </script>
 
 <style lang="scss">
-
-    .components-list-wrapper {
-        height: 100%;
-        display: flex;
-        flex-direction: column;
-    }
-
-    .component-list {
+    .components {
         flex: 1;
         overflow-y: scroll;
     }
 
     .components-col-body {
         border-right: solid 1px rgb(206, 212, 218);
-        height: 100%;
+        display: flex;
+        flex-direction: column;
     }
 
     .components-header {

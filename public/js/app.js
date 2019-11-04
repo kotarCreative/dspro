@@ -11515,6 +11515,20 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 var urlValidator = /https:\/\/([\w\.-]+\.)?figma.com\/(file|proto)\/([0-9a-zA-Z]{22,128})(?:\/.*)?$/;
 var urlPrefix = 'https://www.figma.com/embed?embed_host=astra&url=';
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -11542,20 +11556,24 @@ var urlPrefix = 'https://www.figma.com/embed?embed_host=astra&url=';
   computed: {
     url: function url() {
       return urlPrefix + this.editedComponent.link;
+    },
+    edited: function edited() {
+      return !_.isEqual(this.component, this.editedComponent);
     }
   },
   methods: {
     save: function save() {
       var _this = this;
 
+      if (!this.edited) return;
       this.errors.splice(0, this.errors.length);
 
-      if (!this.editedComponent.title || !this.editedComponent.link) {
+      if (!this.editedComponent.title) {
         this.errors.push('The component title and link are required.');
         return;
       }
 
-      if (!urlValidator.test(this.editedComponent.link)) {
+      if (this.editedComponent.link && !urlValidator.test(this.editedComponent.link)) {
         this.errors.push('Not a valid figma link.');
         return;
       }
@@ -11575,6 +11593,13 @@ var urlPrefix = 'https://www.figma.com/embed?embed_host=astra&url=';
     },
     toggleNeedsChanges: function toggleNeedsChanges() {
       this.editedComponent.needs_changes = !this.editedComponent.needs_changes;
+    },
+    deleteComponent: function deleteComponent() {
+      var _this2 = this;
+
+      axios["delete"]("/components/".concat(this.editedComponent.id)).then(function (response) {
+        _this2.$emit('componentDeleted', _this2.editedComponent);
+      });
     }
   },
   watch: {
@@ -11649,7 +11674,9 @@ __webpack_require__.r(__webpack_exports__);
         });
       }
 
-      return filteredComps;
+      return filteredComps.sort(function (a, b) {
+        return a.title.localeCompare(b.title);
+      });
     }
   },
   methods: {
@@ -11693,6 +11720,9 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: {
     components: Array
@@ -11719,6 +11749,7 @@ __webpack_require__.r(__webpack_exports__);
         needs_changes: false
       };
       Vue.set(this.components, this.components.length, newComp);
+      this.selectedComponent = this.components[this.components.length - 1];
       this.$refs.compList.$forceUpdate();
     },
     updateComponent: function updateComponent(newComponent) {
@@ -11733,6 +11764,20 @@ __webpack_require__.r(__webpack_exports__);
       }
 
       Vue.set(this.components, oldCompIdx, newComponent);
+      this.$refs.compList.$forceUpdate();
+    },
+    removeComponent: function removeComponent(component) {
+      var compIdx = this.components.findIndex(function (c) {
+        return c.id === component.id;
+      });
+      this.components.splice(compIdx, 1);
+      this.$refs.compList.$forceUpdate();
+
+      if (this.components.length > 0) {
+        this.selectedComponent = this.components[0];
+      } else {
+        this.selectedComponent = null;
+      }
     }
   }
 });
@@ -16196,7 +16241,7 @@ exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loa
 
 
 // module
-exports.push([module.i, ".component-form {\n  padding: 20px;\n}\n.changes-btn {\n  width: 137px;\n}\n.figma-frame {\n  border: solid 1px #ced4da;\n  border-radius: 5px;\n}\n.noresize {\n  resize: none;\n}", ""]);
+exports.push([module.i, ".component-form {\n  padding: 20px;\n}\n.changes-btn {\n  width: 137px;\n}\n.figma-frame {\n  border: solid 1px #ced4da;\n  border-radius: 5px;\n}\n.noresize {\n  resize: none;\n}\n.link-wrapper {\n  display: -webkit-box;\n  display: flex;\n  position: relative;\n  -webkit-box-align: center;\n          align-items: center;\n}\n.link-wrapper #link {\n  -webkit-box-flex: 1;\n          flex-grow: 1;\n  padding-right: 34px;\n}\n.link-wrapper a {\n  position: absolute;\n  right: 12px;\n}", ""]);
 
 // exports
 
@@ -16234,7 +16279,7 @@ exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loa
 
 
 // module
-exports.push([module.i, ".app-wrapper, .components-list-wrapper {\n  height: 100%;\n}\n.main-body {\n  margin: auto;\n  margin-top: 60px;\n}", ""]);
+exports.push([module.i, ".app-wrapper, .components-list-wrapper {\n  height: 100%;\n}\n.main-body {\n  height: 100%;\n  margin: auto;\n  margin-top: 60px;\n}\n.banner {\n  height: 100%;\n  display: -webkit-box;\n  display: flex;\n  -webkit-box-align: center;\n          align-items: center;\n  -webkit-box-pack: center;\n          justify-content: center;\n}\n.banner h2 {\n  text-align: center;\n}", ""]);
 
 // exports
 
@@ -47796,28 +47841,43 @@ var render = function() {
             _c("label", { attrs: { for: "link" } }, [_vm._v("Figma Link")]),
             _vm._v(" "),
             _c("div", { staticClass: "form-inline" }, [
-              _c("input", {
-                directives: [
-                  {
-                    name: "model",
-                    rawName: "v-model",
-                    value: _vm.editedComponent.link,
-                    expression: "editedComponent.link"
-                  }
-                ],
-                staticClass: "form-control flex-grow-1",
-                attrs: { type: "text", id: "link" },
-                domProps: { value: _vm.editedComponent.link },
-                on: {
-                  onBlur: _vm.set,
-                  input: function($event) {
-                    if ($event.target.composing) {
-                      return
+              _c("div", { staticClass: "link-wrapper flex-grow-1" }, [
+                _c("input", {
+                  directives: [
+                    {
+                      name: "model",
+                      rawName: "v-model",
+                      value: _vm.editedComponent.link,
+                      expression: "editedComponent.link"
                     }
-                    _vm.$set(_vm.editedComponent, "link", $event.target.value)
+                  ],
+                  staticClass: "form-control",
+                  attrs: { type: "text", id: "link" },
+                  domProps: { value: _vm.editedComponent.link },
+                  on: {
+                    onBlur: _vm.set,
+                    input: function($event) {
+                      if ($event.target.composing) {
+                        return
+                      }
+                      _vm.$set(_vm.editedComponent, "link", $event.target.value)
+                    }
                   }
-                }
-              }),
+                }),
+                _vm._v(" "),
+                _c(
+                  "a",
+                  {
+                    attrs: { href: _vm.editedComponent.link, target: "_blank" }
+                  },
+                  [
+                    _c("font-awesome-icon", {
+                      attrs: { icon: "external-link-alt" }
+                    })
+                  ],
+                  1
+                )
+              ]),
               _vm._v(" "),
               _c(
                 "button",
@@ -47960,12 +48020,34 @@ var render = function() {
           })
         ]),
         _vm._v(" "),
-        _c("div", { staticClass: "form-group" }, [
-          _c(
-            "button",
-            { staticClass: "btn btn-primary w-100", on: { click: _vm.save } },
-            [_vm._v("Save")]
-          )
+        _c("div", { staticClass: "row" }, [
+          _c("div", { staticClass: "col-6" }, [
+            _c("div", { staticClass: "form-group" }, [
+              _c(
+                "button",
+                {
+                  staticClass: "btn btn-danger w-100",
+                  class: { disabled: _vm.editedComponent.id === -1 },
+                  on: { click: _vm.deleteComponent }
+                },
+                [_vm._v("Delete")]
+              )
+            ])
+          ]),
+          _vm._v(" "),
+          _c("div", { staticClass: "col-6" }, [
+            _c("div", { staticClass: "form-group" }, [
+              _c(
+                "button",
+                {
+                  staticClass: "btn btn-primary w-100",
+                  class: { disabled: !_vm.edited },
+                  on: { click: _vm.save }
+                },
+                [_vm._v("Save")]
+              )
+            ])
+          ])
         ])
       ])
     ])
@@ -48135,10 +48217,21 @@ var render = function() {
       "div",
       { staticClass: "main-body col-9" },
       [
-        _c("component-form", {
-          attrs: { component: _vm.selectedComponent },
-          on: { componentUpdated: _vm.updateComponent }
-        })
+        _vm.selectedComponent
+          ? _c("component-form", {
+              attrs: { component: _vm.selectedComponent },
+              on: {
+                componentUpdated: _vm.updateComponent,
+                componentDeleted: _vm.removeComponent
+              }
+            })
+          : _c("div", { staticClass: "banner" }, [
+              _c("h2", [
+                _vm._v(
+                  "Select a component or add a new component to get started."
+                )
+              ])
+            ])
       ],
       1
     )
@@ -48400,6 +48493,7 @@ files.keys().map(function (key) {
 _fortawesome_fontawesome_svg_core__WEBPACK_IMPORTED_MODULE_0__["library"].add(_fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_1__["faSearch"]);
 _fortawesome_fontawesome_svg_core__WEBPACK_IMPORTED_MODULE_0__["library"].add(_fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_1__["faSkullCrossbones"]);
 _fortawesome_fontawesome_svg_core__WEBPACK_IMPORTED_MODULE_0__["library"].add(_fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_1__["faPlus"]);
+_fortawesome_fontawesome_svg_core__WEBPACK_IMPORTED_MODULE_0__["library"].add(_fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_1__["faExternalLinkAlt"]);
 Vue.component('font-awesome-icon', _fortawesome_vue_fontawesome__WEBPACK_IMPORTED_MODULE_2__["FontAwesomeIcon"]);
 /**
  * Next, we will create a fresh Vue application instance and attach it to

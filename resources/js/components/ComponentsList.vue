@@ -41,7 +41,7 @@ export default {
             if (this.searchTerm) {
                 filteredComps = filteredComps.filter(c => c.title.toLowerCase().includes(this.searchTerm.toLowerCase()));
             }
-            return filteredComps;
+            return filteredComps.sort((a, b) => a.title.localeCompare(b.title));
         }
     },
     methods: {

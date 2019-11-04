@@ -59,4 +59,22 @@ class ComponentController extends Controller
         });
 
     }
+
+    /**
+     * Remove a resource in storage.
+     *
+     * @param App\Component $component
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy(Component $component)
+    {
+        return DB::transaction(function () use ($component) {
+            $component->delete();
+
+            return response()->json([
+                'session' => 'Component Deleted.'
+            ]);
+        });
+
+    }
 }

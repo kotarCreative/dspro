@@ -15,3 +15,4 @@ Route::get('/', 'ComponentController@index');
 
 Route::post('/components', 'ComponentController@store');
 Route::patch('/components/{component}', 'ComponentController@update');
+Route::delete('/components/{component}', 'ComponentController@destroy');

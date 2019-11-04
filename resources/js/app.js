@@ -22,14 +22,15 @@ files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(
 /**
  * Fontawesome loader
  */
-import { library } from '@fortawesome/fontawesome-svg-core'
-import { faSearch, faSkullCrossbones, faPlus } from '@fortawesome/free-solid-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-library.add(faSearch)
-library.add(faSkullCrossbones)
-library.add(faPlus)
+import { library } from '@fortawesome/fontawesome-svg-core';
+import { faSearch, faSkullCrossbones, faPlus, faExternalLinkAlt } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+library.add(faSearch);
+library.add(faSkullCrossbones);
+library.add(faPlus);
+library.add(faExternalLinkAlt);
 
-Vue.component('font-awesome-icon', FontAwesomeIcon)
+Vue.component('font-awesome-icon', FontAwesomeIcon);
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to

@@ -6,7 +6,12 @@
                     <div class="form-group">
                         <label for="link">Figma Link</label>
                         <div class="form-inline">
-                            <input type="text" id="link" class="form-control flex-grow-1" v-model="editedComponent.link" @onBlur="set" />
+                            <div class="link-wrapper flex-grow-1">
+                                <input type="text" id="link" class="form-control" v-model="editedComponent.link" @onBlur="set" />
+                                <a :href="editedComponent.link" target="_blank">
+                                    <font-awesome-icon icon="external-link-alt" />
+                                </a>
+                            </div>
                             <button class="btn btn-primary ml-1 changes-btn" :class="{ 'btn-danger': editedComponent.needs_changes }" @click="toggleNeedsChanges">
                                 {{ editedComponent.needs_changes ? 'Changes Needed' : 'Up-to-Date' }}
                             </button>
@@ -42,8 +47,17 @@
                     <label for="comments">Comments</label>
                     <textarea type="text" id="comments" class="form-control noresize" rows="5" v-model="editedComponent.comments"></textarea>
                 </div>
-                <div class="form-group">
-                    <button class="btn btn-primary w-100" @click="save">Save</button>
+                <div class="row">
+                    <div class="col-6">
+                        <div class="form-group">
+                            <button class="btn btn-danger w-100" :class="{ disabled: editedComponent.id === -1 }" @click="deleteComponent">Delete</button>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="form-group">
+                            <button class="btn btn-primary w-100" :class="{disabled: !edited }" @click="save">Save</button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -76,17 +90,21 @@ export default {
     computed: {
         url() {
             return urlPrefix + this.editedComponent.link;
+        },
+        edited() {
+            return !_.isEqual(this.component, this.editedComponent);
         }
     },
     methods: {
         save() {
+            if (!this.edited) return;
             this.errors.splice(0, this.errors.length);
-            if (!this.editedComponent.title || !this.editedComponent.link) {
+            if (!this.editedComponent.title) {
                 this.errors.push('The component title and link are required.');
                 return;
             }
 
-            if (!urlValidator.test(this.editedComponent.link)) {
+            if (this.editedComponent.link && !urlValidator.test(this.editedComponent.link)) {
                 this.errors.push('Not a valid figma link.');
                 return;
             }
@@ -106,6 +124,11 @@ export default {
         },
         toggleNeedsChanges() {
             this.editedComponent.needs_changes = !this.editedComponent.needs_changes;
+        },
+        deleteComponent() {
+            axios.delete(`/components/${this.editedComponent.id}`).then(response => {
+                this.$emit('componentDeleted', this.editedComponent);
+            }); 
         }
     },
     watch: {
@@ -134,4 +157,22 @@ export default {
     .noresize {
         resize: none;
     }
+
+    .link-wrapper {
+        display: flex;
+        position: relative;
+        align-items: center;
+
+        #link {
+            flex-grow: 1;
+            padding-right: 34px;
+        }
+
+        a {
+            position: absolute;
+            right: 12px;
+        }
+    }
+
+
 </style>

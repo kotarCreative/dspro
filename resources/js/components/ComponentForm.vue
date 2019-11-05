@@ -111,12 +111,12 @@ export default {
 
             if (this.editedComponent.id > 0) {
                 axios.patch(`/components/${this.editedComponent.id}`, { ...this.editedComponent }).then(response => {
-                    this.$toasted.show('Component Created');
+                    this.$toasted.show('Component Updated');
                     this.$emit('componentUpdated', response.data.component);
                 });
             } else {
                 axios.post('/components', { ...this.editedComponent }).then(response => {
-                    this.$toasted.show('Component Updated');
+                    this.$toasted.show('Component Created');
                     this.$emit('componentUpdated', response.data.component);
                 });
             }

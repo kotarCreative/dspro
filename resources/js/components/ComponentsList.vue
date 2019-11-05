@@ -2,7 +2,10 @@
     <div class="components-list">
         <div class="components-col-body">
             <div class="components-header">
-                <h1>DS Pro</h1>
+                <div class="title">
+                    <img width="50" height="70" src="/assets/donut.jpg" />
+                    <h1>Donut</h1>
+                </div>
                 <div class="components-actions-bar">
                     <font-awesome-icon icon="skull-crossbones" @click="filter" class="clickable" :class="{ active: filtered }" />
                     <font-awesome-icon icon="plus" @click="addComponent" class="clickable" />
@@ -63,6 +66,15 @@ export default {
 </script>
 
 <style lang="scss">
+    .title {
+        display: flex;
+        align-items: center;
+
+        h1 {
+            margin-bottom: 0px;
+        }
+    }
+
     .components-list {
         height: 100%;
     }

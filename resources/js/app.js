@@ -32,6 +32,15 @@ library.add(faExternalLinkAlt);
 
 Vue.component('font-awesome-icon', FontAwesomeIcon);
 
+import Toasted from 'vue-toasted';
+
+const toastOptions = {
+    position: 'bottom-right',
+    theme: 'bubble',
+    duration: 5000,
+};
+Vue.use(Toasted, toastOptions);
+
 /**
  * Next, we will create a fresh Vue application instance and attach it to
  * the page. Then, you may begin adding components to this application

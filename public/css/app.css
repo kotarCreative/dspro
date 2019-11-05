@@ -11106,3 +11106,13 @@ body,
   height: 100%;
 }
 
+.toasted-container.bottom-right {
+  bottom: 2% !important;
+  right: 2% !important;
+}
+
+.toasted.bubble {
+  background-color: #fff !important;
+  color: #000 !important;
+}
+
